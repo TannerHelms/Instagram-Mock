@@ -4,14 +4,16 @@ import { useDispatch } from "react-redux";
 import { turnOffNavbar, turnOnNavbar } from "../store/navbar_slice";
 import useUsers from "../api/use_users";
 
-const noNavbar = [""];
+const noNavbar = [];
 
 const useNavbar = () => {
     const { me } = useUsers();
     const location = useLocation();
     const path = location.pathname.split("/")[1];
     const dispatch = useDispatch();
+
     useEffect(() => {
+        console.log(me)
         if (me.data) {
             noNavbar.includes(path) ? dispatch(turnOffNavbar()) : dispatch(turnOnNavbar())
         } else {
