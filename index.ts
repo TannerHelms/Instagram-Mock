@@ -11,10 +11,19 @@ import { buildUsersController } from "./server/controllers/users_controller";
 import { buildSessionsController } from "./server/controllers/sessions_controller";
 import { buildHomeController } from "./server/controllers/home_controller";
 import { UsersRepository } from "./server/repositories/users_respository";
+import { GroupsRepository } from "./server/repositories/groups_repository";
+import { MessagesRepository } from "./server/repositories/messages_repository";
+import { FriendsRepository } from "./server/repositories/friends_repository";
+import { buildGroupsController } from "./server/controllers/groups_controller";
+import { buildMessagesController } from "./server/controllers/messages_controller";
+import { buildFriendsController } from "./server/controllers/friends_controller";
 
 
 const db = new PrismaClient();
 const usersRepository = UsersRepository.getInstance(db);
+const groupsRepository = GroupsRepository.getInstance(db);
+const messagesRepository = MessagesRepository.getInstance(db);
+const friendsReposiotry = FriendsRepository.getInstance(db);
 
 dotenv.config();
 
@@ -44,10 +53,13 @@ if (!DEBUG) {
   });
 }
 
-
 app.use("/", buildHomeController());
 app.use("/users", buildUsersController(usersRepository));
 app.use("/sessions", buildSessionsController(db));
+app.use("/groups", buildGroupsController(groupsRepository));
+app.use("/messages", buildMessagesController(messagesRepository));
+app.use("/friends", buildFriendsController(friendsReposiotry));
+
 
 app.listen(process.env.PORT || 3000, () => {
   console.log(`Listening on port ${process.env.PORT || 3000}...`);

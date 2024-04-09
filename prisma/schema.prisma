@@ -27,10 +27,70 @@ model User {
 }
 
 model Profile {
-  id              Int      @id @default(autoincrement())
-  age             Int?
-  profileImageUrl String?
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-  user            User?
+  id                     Int             @id @default(autoincrement())
+  age                    Int?
+  profileImageUrl        String?
+  createdAt              DateTime        @default(now())
+  updatedAt              DateTime        @updatedAt
+  user                   User?
+  sentFriendRequests     FriendRequest[] @relation("from")
+  receivedFriendRequests FriendRequest[] @relation("to")
+  sentMessages           Message[]
+  groups                 Group[]
+  postId                 Int?
+  createdPosts           Post[]          @relation("author")
+  likedPosts             Post[]
+}
+
+model FriendRequest {
+  id     Int     @id @default(autoincrement())
+  fromId Int
+  toId   Int
+  from   Profile @relation("from", fields: [fromId], references: [id])
+  to     Profile @relation("to", fields: [toId], references: [id])
+
+  accepted  Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
+
+model Group {
+  id Int @id @default(autoincrement())
+
+  messages      Message[]
+  lastMessage   String    @default("Newly Created Group")
+  lastMessageAt DateTime  @default(now())
+
+  profiles Profile[]
+
+  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+}
+
+model Message {
+  id Int @id @default(autoincrement())
+
+  body      String
+  image     String?
+  createdAt DateTime @default(now())
+
+  senderId Int
+  sender   Profile @relation(fields: [senderId], references: [id])
+
+  group   Group? @relation(fields: [groupId], references: [id])
+  groupId Int?
+}
+
+model Post {
+  id Int @id @default(autoincrement())
+
+  body  String
+  image String?
+
+  likes Profile[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  authorId Int
+  author   Profile @relation("author", fields: [authorId], references: [id])
 }

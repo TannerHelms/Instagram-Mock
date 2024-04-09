@@ -1,25 +1,21 @@
-import { useSelector } from "react-redux";
-import useUsers from "../../api/use_users";
-import useLogout from "../../hooks/use_logout";
-import { nav } from "../../redux/navbar_slice";
-import { Button, Divider } from "@mantine/core";
-import useInit from "../../hooks/use_init";
-import { FaBeer, FaHome, FaPersonBooth, FaSearch } from "react-icons/fa";
-import { IoHomeOutline, IoSearch } from "react-icons/io5";
 import { AiOutlinePlusSquare } from "react-icons/ai";
 import { CgProfile } from "react-icons/cg";
+import { IoHomeOutline, IoSearch } from "react-icons/io5";
+import { MdChatBubbleOutline } from "react-icons/md";
+import { useSelector } from "react-redux";
+import useInit from "../../hooks/use_init";
+import { nav } from "../../redux/navbar_slice";
 
 const iconSize = "30px";
 const pages = [
   { icon: <IoHomeOutline size={iconSize} />, link: "/home" },
   { icon: <IoSearch size={iconSize} />, link: "/search" },
   { icon: <AiOutlinePlusSquare size={iconSize} />, link: "/create" },
+  { icon: <MdChatBubbleOutline size={iconSize} />, link: "/groups" },
   { icon: <CgProfile size={iconSize} />, link: "/profile" },
 ];
 
 const Navbar = () => {
-  const { me } = useUsers();
-  const { logout } = useLogout();
   const navbar = useSelector(nav);
   const { navigate } = useInit();
 
@@ -31,7 +27,7 @@ const Navbar = () => {
         {pages.map((item, index) => (
           <div
             key={index}
-            className="cursor-pointer hover:bg-slate-400 p-3"
+            className="cursor-pointer hover:bg-blue-300 rounded-lg p-3"
             onClick={() => navigate(item.link)}
           >
             {item.icon}
