@@ -17,6 +17,8 @@ import { FriendsRepository } from "./server/repositories/friends_repository";
 import { buildGroupsController } from "./server/controllers/groups_controller";
 import { buildMessagesController } from "./server/controllers/messages_controller";
 import { buildFriendsController } from "./server/controllers/friends_controller";
+import { PostsRepository } from "./server/repositories/posts_repository";
+import { buildPostsController } from "./server/controllers/posts_controller";
 
 
 const db = new PrismaClient();
@@ -24,6 +26,7 @@ const usersRepository = UsersRepository.getInstance(db);
 const groupsRepository = GroupsRepository.getInstance(db);
 const messagesRepository = MessagesRepository.getInstance(db);
 const friendsReposiotry = FriendsRepository.getInstance(db);
+const postsReposiotry = PostsRepository.getInstance(db);
 
 dotenv.config();
 
@@ -59,6 +62,7 @@ app.use("/sessions", buildSessionsController(db));
 app.use("/groups", buildGroupsController(groupsRepository));
 app.use("/messages", buildMessagesController(messagesRepository));
 app.use("/friends", buildFriendsController(friendsReposiotry));
+app.use("/posts", buildPostsController(postsReposiotry));
 
 
 app.listen(process.env.PORT || 3000, () => {

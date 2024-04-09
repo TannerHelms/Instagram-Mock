@@ -29,8 +29,8 @@ export const buildGroupsController = (repository: GroupsRepository) => {
     // ************ GET ALL THE GROUPS THAT THE SIGNED IN USER IS IN ************
     router.get("/", authMiddleware, async (req, res) => {
         try {
-            const conversations = await repository.getGroups(req.user!!.id);
-            res.json({ conversations });
+            const groups = await repository.getGroups(req.user!!.id);
+            res.json({ groups });
         } catch (error) {
             res.status(500).json({ error: "Cant find users groups" });
         }

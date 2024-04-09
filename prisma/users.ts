@@ -17,6 +17,7 @@ export async function CreateUsers(prisma: PrismaClient, numUsers: number) {
                 password_hash: password,
                 profile: {
                     create: {
+                        backgroundImage: faker.image.url(),
                     },
                 },
             },

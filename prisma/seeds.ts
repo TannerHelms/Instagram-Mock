@@ -21,7 +21,9 @@ async function main() {
       email: process.env.ADMIN_EMAIL!!,
       password_hash: bcrypt.hashSync(process.env.ADMIN_PASSWORD!!),
       profile: {
-        create: {}
+        create: {
+          backgroundImage: "https://media.istockphoto.com/id/685132245/photo/mature-businessman-smiling-over-white-background.jpg?s=612x612&w=0&k=20&c=OJk6U-oCZ31F3TGmarAAg2jVli8ZWTagAcF4P-kNIqA="
+        }
       }
     },
     update: {

@@ -14,7 +14,7 @@ export async function CreatePosts(prisma: PrismaClient, userCount: number) {
         const post = await prisma.post.create({
             data: {
                 body: faker.lorem.sentence(),
-                image: faker.image.imageUrl(),
+                image: faker.image.url(),
                 author: {
                     connect: {
                         id: user.id,

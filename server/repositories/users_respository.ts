@@ -42,6 +42,9 @@ export class UsersRepository {
       where: {
         id: id
       },
+      include: {
+        profile: true
+      }
     });
   }
 

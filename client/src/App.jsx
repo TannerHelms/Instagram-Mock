@@ -4,7 +4,7 @@ import "@mantine/core/styles.css";
 
 const App = () => {
   return (
-    <div className="bg h-svh">
+    <div className="bg">
       <div className="w-fit m-auto">
         <Navbar />
         <Outlet />

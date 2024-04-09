@@ -13,7 +13,6 @@ const useNavbar = () => {
     const dispatch = useDispatch();
 
     useEffect(() => {
-        console.log(me)
         if (me.data) {
             noNavbar.includes(path) ? dispatch(turnOffNavbar()) : dispatch(turnOnNavbar())
         } else {

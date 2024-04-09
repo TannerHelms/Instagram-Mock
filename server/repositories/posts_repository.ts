@@ -31,7 +31,11 @@ export class PostsRepository {
                 updatedAt: 'desc'
             },
             include: {
-
+                author: {
+                    include: {
+                        user: true
+                    }
+                }
             }
         })
     }

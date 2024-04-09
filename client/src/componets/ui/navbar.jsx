@@ -22,7 +22,7 @@ const Navbar = () => {
   if (!navbar) return null;
 
   return (
-    <div className="fixed bottom-0 left-0 w-full bg-white h-20">
+    <div className="fixed bottom-0 left-0 w-full bg-white h-20 z-10">
       <div className="flex justify-between m-auto w-full center max-w-96">
         {pages.map((item, index) => (
           <div
