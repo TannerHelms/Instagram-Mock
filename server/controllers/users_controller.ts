@@ -29,6 +29,13 @@ export const buildUsersController = (usersRepository: UsersRepository) => {
     res.json({ users });
   });
 
+  // ************ GET A USER ************
+  router.get("/:id", async (req, res) => {
+    const userId = req.params.id;
+    const users = await usersRepository.getUserById(parseInt(userId));
+    res.json({ users });
+  });
+
   return router;
 }
 

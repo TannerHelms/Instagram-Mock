@@ -12,7 +12,7 @@ const pages = [
   { icon: <IoSearch size={iconSize} />, link: "/search" },
   { icon: <AiOutlinePlusSquare size={iconSize} />, link: "/create" },
   { icon: <MdChatBubbleOutline size={iconSize} />, link: "/groups" },
-  { icon: <CgProfile size={iconSize} />, link: "/profile" },
+  { icon: <CgProfile size={iconSize} />, link: "/userprofile" },
 ];
 
 const Navbar = () => {

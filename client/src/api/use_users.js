@@ -53,7 +53,7 @@ const useUsers = (id) => {
     });
 
 
-    return { me, user, users }
+    return { me, user, users}
 }
 
 export default useUsers

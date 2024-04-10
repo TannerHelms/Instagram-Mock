@@ -11,7 +11,8 @@ import ProtectedRoute from "./componets/routes/protected_route.jsx";
 import RedirectRoute from "./componets/routes/redirect_route.jsx";
 import "./index.css";
 import Home from "./pages/( HOME )/home.jsx";
-import Profile from "./pages/( PROFILE )/profile.jsx";
+import userProfile from "./pages/( PROFILE )/userprofile.jsx";
+import otherProfile from "./pages/( PROFILE )/otherprofile.jsx";
 import Login from "./pages/( SIGN_IN )/login.jsx";
 import { persistor, store } from "./redux/store.js";
 import appTheme from "./theme/mantine.js";
@@ -56,8 +57,12 @@ const router = createHashRouter([
         element: <ProtectedRoute component={Groups} />,
       },
       {
-        path: "/profile",
-        element: <ProtectedRoute component={Profile} />,
+        path: "/userprofile",
+        element: <ProtectedRoute component={userProfile} />,
+      },
+      {
+        path: "/otherprofile/:id",
+        element: <ProtectedRoute component={otherProfile} />,
       },
     ],
   },
