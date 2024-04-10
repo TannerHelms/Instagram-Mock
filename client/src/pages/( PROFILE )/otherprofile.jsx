@@ -40,8 +40,8 @@ const otherProfile = () => {
   const sentList = requests.sent
   const receivedList = requests.received
 
-  const handleProfileSettings = () => {
-    // Logic to change profile settings
+  const handleFollow = () => {
+    // Logic to follow user
   };
 
   return (
@@ -56,7 +56,7 @@ const otherProfile = () => {
             <p class="text-gray-600 mr-4">Posts: {posts.length}</p>
             <p class="text-gray-600 mr-4">Friends: {friendsList.length}</p>
             <p class="text-gray-600 mr-4">Friend Requests: {receivedList.length}</p>
-            <button class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 mr-2" onClick={handleProfileSettings}>Follow</button>
+            <button class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 mr-2" onClick={handleFollow}>Follow</button>
           </div>
         </div>
       </div>
