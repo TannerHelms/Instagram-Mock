@@ -22,7 +22,19 @@ export async function CreatePosts(prisma: PrismaClient, userCount: number) {
                 },
             },
         });
-
+    }
+    for(let i = 0; i < 11; i++) {
+        const adminPost = await prisma.post.create({
+            data: {
+                body: faker.lorem.sentence(),
+                image: faker.image.url(),
+                author: {
+                    connect: {
+                        id: 1,
+                    },
+                },
+            },
+        });
     }
 
     console.log("Posts created and seeded.")

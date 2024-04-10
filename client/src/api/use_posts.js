@@ -15,12 +15,21 @@ const usePosts = () => {
         return posts;
     };
 
+    const usersPosts = async (id) => {
+        const posts = (await api.get(`/posts/user/${id}`)).posts;
+        posts.map((post) => {
+            post.createdAt = timeAgo(new Date(post.createdAt));
+            return post;
+        });
+        return posts;
+    };
+
     const posts = useQuery({
         queryKey: ["posts"],
         queryFn: all,
     });
 
-    return { posts }
+    return { posts, usersPosts}
 }
 
 export default usePosts;

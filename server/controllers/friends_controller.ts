@@ -1,17 +1,23 @@
 import { Router } from "express";
 import { FriendsRepository } from "../repositories/friends_repository";
+import { authMiddleware } from "../middleware/authentication";
 
 export const buildFriendsController = (repository: FriendsRepository) => {
     const router = Router();
 
     // ************ GET ALL FRIENDS ************
-    router.get("/", async (req, res) => {
-        const friends = await repository.getFriends(req.user!!.id);
-        res.json({ friends });
+    router.get("/", authMiddleware, async (req, res) => {
+        try {
+            const userId = req.user!!.id;
+            const friends = await repository.getFriends(userId);
+            res.json({ friends });
+        } catch (error) {
+            res.status(500).json({ error: "Failed to Get Friends" });
+        }
     });
 
     // ************ REMOVE A FRIEND ************
-    router.delete("/:id", async (req, res) => {
+    router.delete("/:id", authMiddleware, async (req, res) => {
         try {
             const id = req.params.id;
             await repository.removeFriend(parseInt(id));
@@ -22,7 +28,7 @@ export const buildFriendsController = (repository: FriendsRepository) => {
     });
 
     // ************ ADD A FRIEND ************
-    router.post("/", async (req, res) => {
+    router.post("/", authMiddleware, async (req, res) => {
         try {
             const { from, to } = req.body;
             await repository.addFriend(from, to);
@@ -33,7 +39,7 @@ export const buildFriendsController = (repository: FriendsRepository) => {
     });
 
     // ********** Accept a friend request **********
-    router.post("/:id", async (req, res) => {
+    router.post("/:id", authMiddleware, async (req, res) => {
         try {
             const id = req.params.id;
             await repository.acceptFriendRequest(parseInt(id));
@@ -44,7 +50,7 @@ export const buildFriendsController = (repository: FriendsRepository) => {
     });
 
     // ************ GET ALL FRIEND REQUESTS ************
-    router.get("/requests", async (req, res) => {
+    router.get("/requests", authMiddleware, async (req, res) => {
         try {
             const sent = await repository.getSentFriendRequests(req.user!!.id);
             const received = await repository.getReceivedFriendRequests(req.user!!.id);
