@@ -70,10 +70,15 @@ export class GroupsRepository {
                 id
             },
             include: {
-                profiles: true,
+                profiles: {
+                    include: {
+                        user: true
+                    }
+
+                },
                 messages: {
                     orderBy: {
-                        createdAt: 'desc'
+                        createdAt: 'asc'
                     },
                     include: {
                         sender: {

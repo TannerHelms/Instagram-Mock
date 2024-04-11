@@ -32,7 +32,7 @@ const GroupCard = ({ group }) => {
           </div>
           <div className="flex flex-col gap-3">
             <p>{group.lastMessage}</p>
-            <p>{group.lastMessageAt}</p>
+            <p className="label">{group.lastMessageAt}</p>
           </div>
         </div>
         <div>
