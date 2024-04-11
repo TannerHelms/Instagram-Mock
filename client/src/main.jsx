@@ -18,6 +18,7 @@ import appTheme from "./theme/mantine.js";
 import Search from "./pages/( SEARCH )/search.jsx";
 import Create from "./pages/( CREATE )/create.jsx";
 import Groups from "./pages/( GROUPS )/group.jsx";
+import GroupDetails from "./pages/( GROUPS )/group_details.jsx";
 
 const container = document.getElementById("root");
 const root = createRoot(container);
@@ -54,6 +55,10 @@ const router = createHashRouter([
       {
         path: "/groups",
         element: <ProtectedRoute component={Groups} />,
+      },
+      {
+        path: "/groups/:id",
+        element: <ProtectedRoute component={GroupDetails} />,
       },
       {
         path: "/profile",

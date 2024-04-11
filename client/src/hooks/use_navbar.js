@@ -4,12 +4,12 @@ import { useDispatch } from "react-redux";
 import { turnOffNavbar, turnOnNavbar } from "../store/navbar_slice";
 import useUsers from "../api/use_users";
 
-const noNavbar = [];
+const noNavbar = ["groups/1"];
 
 const useNavbar = () => {
     const { me } = useUsers();
     const location = useLocation();
-    const path = location.pathname.split("/")[1];
+    const path = location.pathname.split("/", 2)[1];
     const dispatch = useDispatch();
 
     useEffect(() => {

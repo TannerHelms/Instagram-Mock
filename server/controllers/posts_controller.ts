@@ -33,7 +33,6 @@ export const buildPostsController = (repository: PostsRepository) => {
 
     // ************ GET ALL POSTS ************
     router.get("/", authMiddleware, async (req, res) => {
-        console.log('here')
         const posts = await repository.getPosts();
         res.json({ posts });
     });
@@ -43,6 +42,5 @@ export const buildPostsController = (repository: PostsRepository) => {
         const posts = await repository.getPostsByUser(parseInt(req.params.id));
         res.json({ posts });
     });
-
     return router;
 }

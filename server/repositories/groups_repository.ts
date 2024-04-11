@@ -53,7 +53,11 @@ export class GroupsRepository {
                         createdAt: 'desc'
                     },
                     include: {
-                        sender: true
+                        sender: {
+                            include: {
+                                user: true
+                            }
+                        }
                     }
                 }
             }
@@ -72,7 +76,11 @@ export class GroupsRepository {
                         createdAt: 'desc'
                     },
                     include: {
-                        sender: true
+                        sender: {
+                            include: {
+                                user: true
+                            }
+                        }
                     }
                 }
             }
