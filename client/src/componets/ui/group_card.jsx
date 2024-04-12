@@ -11,7 +11,7 @@ const GroupCard = ({ group }) => {
   return (
     <Card
       key={group.id}
-      className="bg-white p-4 rounded-lg flex flex-row gap-3"
+      className="bg-white p-4 rounded-lg flex gap-3"
       shadow="sm"
       padding="lg"
       radius="md"
