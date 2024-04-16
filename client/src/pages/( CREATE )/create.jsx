@@ -14,24 +14,27 @@ const Create = () => {
 
     const sendPost = async () => {
         const formData = new FormData();
-        formData.append('content', content);
+        formData.append('body', content);
         if (image) formData.append('image', image);
-
+    
         try {
-            
-            const response = await api.post('/posts', formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                },
-            });
-            console.log(response);
-            alert("Post created successfully!");
-            
+            const response = await api.post('/posts', formData);
+    
+            // Check if the response status is OK (200)
+            if (response.ok) {
+                console.log(response);
+                alert("Post created successfully!");
+            } else {
+                // If response status is not OK, handle the error
+                const errorMessage = await response.text(); // Get the plain text error message
+                throw new Error(errorMessage); // Throw an error with the message
+            }
         } catch (error) {
             console.error("Failed to create post:", error);
-            alert("Failed to create post.");
+            alert("Failed to create post: " + error.message); // Display the error message to the user
         }
     };
+    
 
     return (
         <div className="create-post-container">
