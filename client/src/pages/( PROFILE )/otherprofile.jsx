@@ -6,36 +6,77 @@ import { useParams } from 'react-router-dom';
 
 const otherProfile = () => {
   const { id } = useParams();
-  const { user } = useUsers(id);
+  const { me, user } = useUsers(id);
   const { usersPosts } = usePosts();
-  const { getFriends} = useFriends();
+  const { getFriends, addFriend, removeFriend, getFriendRequests } = useFriends();
 
   const [posts, setPosts] = useState([]);
   const [friends, setFriends] = useState(undefined);
+  const [status, setStatus] = useState('Insert Text');
+
+  const fetchData = async () => {
+    if (id) {
+      try {
+        const posts = await usersPosts(id);
+        setPosts(posts);
+        
+        const userFriends = await getFriends(id);
+        setFriends(userFriends.friends);
+
+        const requests = await getFriendRequests(id);
+
+        if (userFriends.friends.length !== 0) {
+          for (const friend of userFriends.friends) {
+            if (friend.toId === me.data.id || friend.fromId === me.data.id) {
+              setStatus('Unfollow');
+              break;
+            } else {
+              setStatus('Follow');
+            }
+          }
+        } else {
+          for (const req of requests.received) {
+            if (req.toId === me.data.id || req.fromId == me.data.id) {
+              setStatus('Requested');
+              break;
+            } else {
+              setStatus('Follow');
+            }
+          }
+        }
+
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    }
+  };
 
   useEffect(() => {
-    if(id){
-      usersPosts(id)
-        .then(posts => setPosts(posts))
-        .catch(error => console.error('Error fetching user posts:', error));
+    fetchData();
+  }, []);
 
-      getFriends(id)
-        .then(friends => {
-          setFriends(friends);
-        })
-        .catch(error => console.error('Error fetching friends:', error));
-    } 
-  }, [user]);
+  const handleBtn = () => {
+    if (status == 'Unfollow') {
+      for(let friend of friends) {
+        if(friend.fromId == me.data.id || friend.toId == me.data.id && friend.accepted){
+          removeFriend(friend.id)
+        }
+      }
+      setStatus('Follow')
+    } else if (status == 'Follow') {
+      addFriend(user.data.id, me.data.id);
+      setStatus('Requested')
+    } else {
+      // nothing
+    }
+    fetchData()
+  };
 
   if (!user.data || !friends) {
     return <div className="center flex flex-col gap-2 items-center">Loading...</div>;
   }
 
-  const friendsList = friends.friends
-
-  const handleFollow = () => {
-    // Logic to follow user
-  };
+  const friendsList = friends;
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -48,7 +89,9 @@ const otherProfile = () => {
           <div className="flex justify-right items-center">
             <p className="text-gray-600 mr-4">Posts: {posts.length}</p>
             <p className="text-gray-600 mr-4">Friends: {friendsList.length}</p>
-            <button className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 mr-2" onClick={handleFollow}>Follow</button>
+            <button className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 mr-2" onClick={() => handleBtn()}>
+              {status}
+            </button>
           </div>
         </div>
       </div>

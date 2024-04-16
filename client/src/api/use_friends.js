@@ -1,4 +1,4 @@
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import {useQueryClient } from "@tanstack/react-query";
 import useApi from "../hooks/use_api";
 
 const useFriends = (id) => {
@@ -12,7 +12,6 @@ const useFriends = (id) => {
   };
 
   const removeFriend = async (friendId) => {
-    console.log(friendId)
     await api.del(`/friends/${friendId}`);
     queryClient.invalidateQueries("friends");
   };
