@@ -23,23 +23,24 @@ const UserProfile = () => {
 
   const dropdownRef = useRef(null);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      if (me.data.id) {
-        try {
-          const userPosts = await usersPosts(me.data.id);
-          setPosts(userPosts);
-          
-          const userFriends = await getFriends(me.data.id);
-          setFriends(userFriends);
+  const fetchData = async () => {
+    if (me.data.id) {
+      try {
+        const userPosts = await usersPosts(me.data.id);
+        setPosts(userPosts);
+        
+        const userFriends = await getFriends(me.data.id);
+        setFriends(userFriends);
 
-          const frequests = await getFriendRequests(me.data.id);
-          setRequests(frequests)
-        } catch (error) {
-          console.error('Error fetching data:', error);
-        }
+        const frequests = await getFriendRequests(me.data.id);
+        setRequests(frequests)
+      } catch (error) {
+        console.error('Error fetching data:', error);
       }
-    };
+    }
+  };
+
+  useEffect(() => {
     fetchData();
   }, [me.data.id]);
 
@@ -83,6 +84,16 @@ const UserProfile = () => {
       .catch(error => console.error('Error updating profile:', error));
       closeEditProfileModal
   };
+
+  const handleAddFriend = (id) => {
+    acceptFriendRequest(id)
+    fetchData()
+  }
+
+  const handleRemoveFriend = (id) => {
+    removeFriend(id)
+    fetchData()
+  }
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -136,7 +147,7 @@ const UserProfile = () => {
       {isAcceptingFriends && (
         <AcceptFriendsModal
           onClose={() => setIsAcceptingFriends(false)}
-          onAccept={acceptFriendRequest}
+          onAccept={handleAddFriend}
           friendRequests={receivedList}
         />
       )}
@@ -145,7 +156,7 @@ const UserProfile = () => {
       {isRemovingFriends && (
         <RemoveFriendsModal
           onClose={() => setIsRemovingFriends(false)}
-          onRemove={removeFriend}
+          onRemove={handleRemoveFriend}
           friendsList={friendsList}
         />
       )}

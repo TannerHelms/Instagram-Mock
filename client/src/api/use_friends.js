@@ -12,7 +12,8 @@ const useFriends = (id) => {
   };
 
   const removeFriend = async (friendId) => {
-    await api.delete(`/friends/${friendId}`);
+    console.log(friendId)
+    await api.del(`/friends/${friendId}`);
     queryClient.invalidateQueries("friends");
   };
 
