@@ -3,6 +3,11 @@ import jwt from "jsonwebtoken";
 import { authMiddleware } from "../middleware/authentication";
 import { UsersRepository } from "../repositories/users_respository";
 
+export type CreateProfilePayload = {
+  age?: number;
+  backgroundImage?: string;
+};
+
 // /users/...
 export const buildUsersController = (usersRepository: UsersRepository) => {
   const router = Router();
@@ -34,6 +39,21 @@ export const buildUsersController = (usersRepository: UsersRepository) => {
     const userId = req.params.id;
     const users = await usersRepository.getUserById(parseInt(userId));
     res.json({ users });
+  });
+
+  // ************ GET PROFILE BY USER ID ************
+  router.get('/:id/profile', async (req, res) => {
+    const userId = req.params.id;
+    const profile = await usersRepository.getProfileByUserId(parseInt(userId));
+    res.json({ profile });
+  });
+
+  // ************ UPDATE PROFILE & USER ************
+  router.put('/:id/profile', async (req, res) => {
+    const userId = req.params.id;
+    const data: Partial<CreateProfilePayload> = req.body;
+    const updatedProfile = await usersRepository.updateUser(parseInt(userId), data);
+    res.json({ updatedProfile });
   });
 
   return router;

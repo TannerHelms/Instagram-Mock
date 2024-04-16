@@ -8,6 +8,13 @@ export type CreateUserPayload = {
   lastName: string,
 }
 
+export type UpdateProfilePayload = {
+  firstName: string,
+  lastName: string,
+  age?: number;
+  backgroundImage?: string;
+};
+
 export class UsersRepository {
   private db: PrismaClient
   private static instance: UsersRepository
@@ -55,4 +62,41 @@ export class UsersRepository {
       }
     });
   }
+
+  // PROFILE
+
+  async getProfileByUserId(id: number) {
+    return await this.db.profile.findUnique({
+      where: { id },
+      include: {
+        user: true
+      }
+    });
+  }
+
+  async updateUser(id: number, data: Partial<UpdateProfilePayload>) {
+    await this.db.profile.update({
+      where: { id },
+      data: {
+        age: data.age,
+        backgroundImage: data.backgroundImage,
+        updatedAt: new Date()
+      },
+      include: {
+        user: true
+      }
+    });
+    return await this.db.user.update({
+      where: { id },
+      data: {
+        firstName: data.firstName,
+        lastName: data.lastName,
+        updatedAt: new Date()
+      },
+      include: {
+        profile: true
+      }
+    })
+  }
+
 }

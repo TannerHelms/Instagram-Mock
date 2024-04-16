@@ -37,6 +37,11 @@ const useUsers = (id) => {
         return flattenObject(user)
     };
 
+    const update = async (userId, data) => {
+        const updatedUser = await api.put(`/users/${userId}/profile`, data);
+        return flattenObject(updatedUser);
+    };
+
 
     // ALL USERS
     const users = useQuery({
@@ -53,7 +58,7 @@ const useUsers = (id) => {
     });
 
 
-    return { me, user, users}
+    return { me, user, users, updateProfile: update}
 }
 
 export default useUsers

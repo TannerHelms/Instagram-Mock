@@ -3,37 +3,46 @@ import useUsers from "../../api/use_users";
 import useFriends from "../../api/use_friends";
 import useLogout from "../../hooks/use_logout";
 import usePosts from "../../api/use_posts";
+import ProfileEditModal from '../../componets/ui/profileEditModal';
+import AcceptFriendsModal from '../../componets/ui/acceptFriendsModal';
+import RemoveFriendsModal from '../../componets/ui/removeFriends.Modal';
 
 const UserProfile = () => {
-  const { me } = useUsers();
+  const { me, updateProfile } = useUsers();
   const { usersPosts } = usePosts();
-  const { getFriends, getFriendRequests } = useFriends();
+  const { getFriends, getFriendRequests, acceptFriendRequest, removeFriend } = useFriends();
   const { logout } = useLogout();
 
   const [posts, setPosts] = useState([]);
   const [friends, setFriends] = useState(undefined);
   const [requests, setRequests] = useState(undefined);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isEditingProfile, setIsEditingProfile] = useState(false);
+  const [isAcceptingFriends, setIsAcceptingFriends] = useState(false);
+  const [isRemovingFriends, setIsRemovingFriends] = useState(false);
 
   const dropdownRef = useRef(null);
 
   useEffect(() => {
-    if (me.data.id) {
-      usersPosts(me.data.id)
-        .then(posts => setPosts(posts))
-        .catch(error => console.error('Error fetching user posts:', error));
+    const fetchData = async () => {
+      if (me.data.id) {
+        try {
+          const userPosts = await usersPosts(me.data.id);
+          setPosts(userPosts);
+          
+          const userFriends = await getFriends(me.data.id);
+          setFriends(userFriends);
 
-      getFriends(me.data.id)
-        .then(friends => {
-          setFriends(friends);
-        })
-        .catch(error => console.error('Error fetching friends:', error));
-
-      getFriendRequests(me.data.id)
-        .then(requests => setRequests(requests))
-        .catch(error => console.error('Error fetching friend requests:', error));
-    }
+          const frequests = await getFriendRequests(me.data.id);
+          setRequests(frequests)
+        } catch (error) {
+          console.error('Error fetching data:', error);
+        }
+      }
+    };
+    fetchData();
   }, [me.data.id]);
+
 
   useEffect(() => {
     function handleClickOutside(event) {
@@ -52,15 +61,27 @@ const UserProfile = () => {
   }
 
   const friendsList = friends.friends
-  const sentList = requests.sent
   const receivedList = requests.received
 
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
   };
 
-  const handleProfileSettings = () => {
-    // Logic to change profile settings
+  const openEditProfileModal = () => {
+    setIsEditingProfile(true);
+  };
+
+  const closeEditProfileModal = () => {
+    setIsEditingProfile(false);
+  };
+
+  const handleProfileUpdate = (updatedProfileData) => {
+    updateProfile(me.data.id, updatedProfileData)
+      .then(() => {
+        closeEditProfileModal();
+      })
+      .catch(error => console.error('Error updating profile:', error));
+      closeEditProfileModal
   };
 
   return (
@@ -72,16 +93,17 @@ const UserProfile = () => {
             <strong className="ml-2">{me.data.firstName} {me.data.lastName}</strong>
           </div>
           <div className="flex justify-right items-center relative">
-            <p class="text-gray-600 mr-4">Posts: {posts.length}</p>
-            <p class="text-gray-600 mr-4">Friends: {friendsList.length}</p>
-            <p class="text-gray-600 mr-4">Friend Requests: {receivedList.length}</p>
+            <p className="text-gray-600 mr-4">Posts: {posts.length}</p>
+            <p className="text-gray-600 mr-4">Friends: {friendsList.length}</p>
+            <p className="text-gray-600 mr-4">Friend Requests: {receivedList.length}</p>
             <div ref={dropdownRef} className="relative">
               <button className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 mr-2" onClick={toggleDropdown}>Settings</button>
               {isDropdownOpen && (
                 <div className="absolute top-full w-full right-0 mt-2 mr-2 bg-white border border-gray-200 shadow-lg rounded-md z-10" style={{ width: 'max-content' }}>
                   {/* Dropdown content */}
-                  <button className="block px-4 py-2 w-full text-left hover:bg-gray-100">Edit Picture</button>
-                  <button className="block px-4 py-2 w-full text-left hover:bg-gray-100">Edit User</button>
+                  <button className="block px-4 py-2 w-full text-left hover:bg-gray-100" onClick={openEditProfileModal}>Edit User</button>
+                  <button className="block px-4 py-2 w-full text-left hover:bg-gray-100" onClick={() => setIsAcceptingFriends(true)}>Accept Friends</button>
+                  <button className="block px-4 py-2 w-full text-left hover:bg-gray-100" onClick={() => setIsRemovingFriends(true)}>Remove Friends</button>
                 </div>
               )}
             </div>
@@ -100,6 +122,33 @@ const UserProfile = () => {
           </div>
         </div>
       </div>
+
+      {/* Render Edit Profile Modal */}
+      {isEditingProfile && (
+        <ProfileEditModal
+          onClose={closeEditProfileModal}
+          onUpdate={handleProfileUpdate}
+          initialProfileData={me.data} // Optionally, pass initial profile data to the modal
+        />
+      )}
+
+      {/* Render Accept Friends Modal */}
+      {isAcceptingFriends && (
+        <AcceptFriendsModal
+          onClose={() => setIsAcceptingFriends(false)}
+          onAccept={acceptFriendRequest}
+          friendRequests={receivedList}
+        />
+      )}
+
+      {/* Render Remove Friends Modal */}
+      {isRemovingFriends && (
+        <RemoveFriendsModal
+          onClose={() => setIsRemovingFriends(false)}
+          onRemove={removeFriend}
+          friendsList={friendsList}
+        />
+      )}
     </div>
   );
 };
