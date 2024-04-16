@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import useApi from '../../../hooks/use_api';
+import useApi from '../../hooks/use_api';
 
 const Create = () => {
     const [content, setContent] = useState('');
