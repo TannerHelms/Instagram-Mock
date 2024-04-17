@@ -20,20 +20,22 @@ const Create = () => {
         try {
             const response = await api.post('/posts', formData);
     
-            // Check if the response status is OK (200)
-            if (response.ok) {
-                console.log(response);
+            // This assumes your API returns a response with a status indicating success or failure.
+            // Since the API class automatically parses JSON, you should have a JavaScript object here.
+            if (!response.error) {
+                console.log('Post created successfully:', response);
                 alert("Post created successfully!");
             } else {
-                // If response status is not OK, handle the error
-                const errorMessage = await response.text(); // Get the plain text error message
-                throw new Error(errorMessage); // Throw an error with the message
+                // If the API response includes an 'error' field, use it for the error message
+                throw new Error(response.error);
             }
         } catch (error) {
             console.error("Failed to create post:", error);
-            alert("Failed to create post: " + error.message); // Display the error message to the user
+            // This will display a more specific error message if available, or a generic one otherwise.
+            alert("Failed to create post: " + error.message);
         }
     };
+    
     
 
     return (

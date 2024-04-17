@@ -1,0 +1,30 @@
+version: '3.8'
+services:
+  db:
+    image: postgres
+    container_name: ${DB_CONTAINER_NAME}
+    ports:
+      - ${DB_PORT}:5432
+    volumes:
+      - db:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=${DB_USER}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+  
+  app:  # This is the new service for your Node.js application
+    build: . # This assumes you have a Dockerfile in the root of your project
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./public/uploads:/app/public/uploads # Add this line for your uploads
+    depends_on:
+      - db
+
+volumes:
+  db:

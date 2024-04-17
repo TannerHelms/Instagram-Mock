@@ -13,7 +13,22 @@ import { Router } from "express";
 import fileUpload, { UploadedFile } from 'express-fileupload';
 import { PostsRepository } from "../repositories/posts_repository";
 import { authMiddleware } from "../middleware/authentication";
+import * as path from 'path';
+import * as fs from 'fs';
 
+
+
+const uploadPath = path.join(__dirname, '..', 'public', 'uploads'); // Adjust the path as needed
+
+// Ensure the upload directory exists
+try {
+    if (!fs.existsSync(uploadPath)) {
+      fs.mkdirSync(uploadPath, { recursive: true });
+    }
+  } catch (error) {
+    console.error("Error creating uploads directory:", error);
+  }
+  
 
 export const buildPostsController = (repository: PostsRepository) => {
     const router = Router();
@@ -28,27 +43,38 @@ export const buildPostsController = (repository: PostsRepository) => {
 
     // ************ CREATE A POST ************
     router.post("/", authMiddleware, async (req, res) => {
-        if (!req.files || !req.files.image) {
-            return res.status(400).json({ error: 'No image file was uploaded.'});
+        if (!req.files || Object.keys(req.files).length === 0) {
+            return res.status(400).json({ error: 'No files were uploaded.' });
         }
 
-        // Assuming 'image' is the name of the file input field
         const imageFile = req.files.image as UploadedFile;
-        // For express-fileupload, when using temp files, use `tempFilePath` to get the path
-        const imagePath = imageFile.tempFilePath;
-        const userId = req.user!!.id; 
-        try {
-            const bodyText = req.body.body; // Correctly extracting 'body' text from req.body
-            const post = await repository.create({
-                body: bodyText,
-                image: imagePath,
-                userId // Assuming authMiddleware correctly sets req.user
-            });
-            res.json({ post });
-        } catch (error) {
-            console.error("Failed to create post:", error);
-            res.status(500).json({ error: "Failed to create post." });
-        }
+        const userId = req.user!!.id;
+        const filename = `${userId}_${Date.now()}_${imageFile.name}`;
+        const savePath = path.join(uploadPath, filename);
+
+        // Use the mv() method to place the file on the server
+        imageFile.mv(savePath, async (err) => {
+            if (err) {
+                return res.status(500).json({ error: 'Failed to upload the image.' });
+            }
+
+            try {
+                // Construct the URL to the saved image
+                const imageUrl = `${req.protocol}://${req.get('host')}/uploads/${filename}`;
+                
+                const bodyText = req.body.body;
+                const post = await repository.create({
+                    body: bodyText,
+                    image: imageUrl,
+                    userId
+                });
+
+                res.json({ post });
+            } catch (error) {
+                console.error("Failed to create post:", error);
+                res.status(500).json({ error: "Failed to create post." });
+            }
+        });
     });
 
     // ************ GET ALL POSTS ************
