@@ -44,17 +44,25 @@ app.use((req, res, next) => {
   next()
 });
 
-// if (!DEBUG) {
-//   app.use(express.static('static'));
-// } else {
-//   app.use((req, res, next) => {
-//     if (req.url.includes(".")) {
-//       res.redirect(`${process.env.ASSET_URL}/${req.url}`)
-//     } else {
-//       next();
-//     }
-//   });
-// }
+app.use((req, res, next) => {
+  if (req.url.includes("uploads")) {
+    res.sendFile(path.join(__dirname, "./server/public", req.url));
+  } else {  
+    next();
+  }
+});
+
+if (!DEBUG) {
+  app.use(express.static('static'));
+} else {
+  app.use((req, res, next) => {
+    if (req.url.includes(".")) {
+      res.redirect(`${process.env.ASSET_URL}/${req.url}`)
+    } else {
+      next();
+    }
+  });
+}
 
 app.use("/", buildHomeController());
 app.use("/users", buildUsersController(usersRepository));
