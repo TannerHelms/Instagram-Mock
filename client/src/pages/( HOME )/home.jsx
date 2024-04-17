@@ -12,6 +12,7 @@ import { FaRegHeart, FaThumbsUp } from "react-icons/fa";
 import { FaRegComment } from "react-icons/fa";
 import useUsers from "../../api/use_users";
 import { useDisclosure } from "@mantine/hooks";
+import useInit from "../../hooks/use_init";
 
 const iconSize = "30px";
 
@@ -19,6 +20,7 @@ const Home = () => {
   const { me } = useUsers();
   const { posts } = usePosts();
   const [visible, { toggle }] = useDisclosure(true);
+  const { navigate } = useInit();
 
   if (posts.isLoading)
     return (
@@ -55,7 +57,7 @@ const Home = () => {
               <div className="flex gap-3 items-center">
                 <Button>Follow</Button>
                 <span className="cursor-pointer">
-                  <HiDotsHorizontal />
+                  <HiDotsHorizontal onClick={() => navigate(`/otherprofile/${post.author.id}`)}/>
                 </span>
               </div>
             </div>

@@ -26,7 +26,11 @@ export class FriendsRepository {
                 ]
             },
             include: {
-                from: true,
+                from: {
+                    include: {
+                        user: true
+                    }
+                },
                 to: true
             }
         })
@@ -79,7 +83,11 @@ export class FriendsRepository {
                 accepted: false
             },
             include: {
-                from: true
+                from: {
+                    include: {
+                        user: true
+                    }
+                }
             }
         })
     }

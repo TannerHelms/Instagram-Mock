@@ -8,7 +8,19 @@ export async function CreatePosts(prisma: PrismaClient, userCount: number) {
     });
 
 
-
+    for(let i = 0; i < 11; i++) {
+        const adminPost = await prisma.post.create({
+            data: {
+                body: faker.lorem.sentence(),
+                image: faker.image.url(),
+                author: {
+                    connect: {
+                        id: 1,
+                    },
+                },
+            },
+        });
+    }
     for (let j = 0; j < userCount * 3; j++) {
         const user = faker.helpers.arrayElement(users);
         const post = await prisma.post.create({
@@ -22,7 +34,6 @@ export async function CreatePosts(prisma: PrismaClient, userCount: number) {
                 },
             },
         });
-
     }
 
     console.log("Posts created and seeded.")

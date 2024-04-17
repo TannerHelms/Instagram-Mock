@@ -5,9 +5,14 @@ export const buildFriendsController = (repository: FriendsRepository) => {
     const router = Router();
 
     // ************ GET ALL FRIENDS ************
-    router.get("/", async (req, res) => {
-        const friends = await repository.getFriends(req.user!!.id);
-        res.json({ friends });
+    router.get("/user/:id", async (req, res) => {
+        try {
+            const userId = req.params.id;
+            const friends = await repository.getFriends(parseInt(userId));
+            res.json({ friends });
+        } catch (error) {
+            res.status(500).json({ error: "Failed to Get Friends" });
+        }
     });
 
     // ************ REMOVE A FRIEND ************
@@ -44,10 +49,11 @@ export const buildFriendsController = (repository: FriendsRepository) => {
     });
 
     // ************ GET ALL FRIEND REQUESTS ************
-    router.get("/requests", async (req, res) => {
+    router.get("/user/:id/requests", async (req, res) => {
         try {
-            const sent = await repository.getSentFriendRequests(req.user!!.id);
-            const received = await repository.getReceivedFriendRequests(req.user!!.id);
+            const userId = req.params.id;
+            const sent = await repository.getSentFriendRequests(parseInt(userId));
+            const received = await repository.getReceivedFriendRequests(parseInt(userId));
             res.json({ sent, received });
         } catch (error) {
             res.status(500).json({ error: "Failed to get friend requests" });
