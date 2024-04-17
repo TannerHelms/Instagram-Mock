@@ -29,7 +29,6 @@ const Create = () => {
       // Since the API class automatically parses JSON, you should have a JavaScript object here.
       if (!response.error) {
         queryClient.invalidateQueries("posts");
-        console.log("Post created successfully:", response);
         alert("Post created successfully!");
       } else {
         // If the API response includes an 'error' field, use it for the error message

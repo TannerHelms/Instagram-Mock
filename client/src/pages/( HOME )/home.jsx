@@ -23,7 +23,7 @@ const Home = () => {
   const [visible, { toggle }] = useDisclosure(true);
   const { navigate } = useInit();
   const { addFriend, friends, requests, cancel } = useFriends();
-  if (posts.isLoading)
+  if (posts.isLoading || requests.isLoading)
     return (
       <LoadingOverlay
         visible={posts.isLoading}
