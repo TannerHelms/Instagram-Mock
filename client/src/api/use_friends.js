@@ -1,15 +1,21 @@
-import {useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import useApi from "../hooks/use_api";
+import useUsers from "./use_users";
 
-const useFriends = (id) => {
+const useFriends = (userId) => {
   const api = useApi();
   const queryClient = useQueryClient();
+  const { me } = useUsers();
 
   // GET FRIENDS
   const getFriends = async (id) => {
-    const friends = await api.get(`/friends/user/${id}`);
+    const friends = await api.get(`/friends/user/${id}}`);
     return friends;
   };
+
+  const myFriends = async () => {
+    return (await api.get(`/friends/user/${me.data.id}`)).friends;
+  }
 
   const removeFriend = async (friendId) => {
     await api.del(`/friends/${friendId}`);
@@ -31,12 +37,36 @@ const useFriends = (id) => {
     return requests;
   };
 
+  const myFriendRequests = async () => {
+    const req = await api.get(`/friends/user/${parseInt(me.data.id)}/requests`);
+    return req;
+  }
+
+  const cancel = async (toId) => {
+    await api.del(`/friends/request/${toId}`);
+    queryClient.invalidateQueries("requests");
+  }
+
+  const friends = useQuery({
+    queryKey: ["friends"],
+    queryFn: myFriends,
+  });
+
+  const requests = useQuery({
+    queryKey: ["requests"],
+    queryFn: myFriendRequests,
+  });
+
+
   return {
     getFriends,
     getFriendRequests,
     removeFriend,
     addFriend,
     acceptFriendRequest,
+    friends,
+    requests,
+    cancel,
   };
 };
 

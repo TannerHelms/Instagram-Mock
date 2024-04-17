@@ -29,8 +29,8 @@ export const buildUsersController = (usersRepository: UsersRepository) => {
   });
 
   // ************ GET ALL USERS ************
-  router.get("/", async (req, res) => {
-    const users = await usersRepository.getUsers();
+  router.get("/", authMiddleware, async (req, res) => {
+    const users = await usersRepository.getUsers(req.user!!.id);
     res.json({ users });
   });
 

@@ -55,10 +55,15 @@ export class UsersRepository {
     });
   }
 
-  async getUsers() {
+  async getUsers(userId: number) {
     return this.db.user.findMany({
       include: {
         profile: true
+      },
+      where: {
+        NOT: {
+          id: userId
+        }
       }
     });
   }

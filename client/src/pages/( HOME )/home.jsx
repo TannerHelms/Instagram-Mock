@@ -13,6 +13,7 @@ import { FaRegComment } from "react-icons/fa";
 import useUsers from "../../api/use_users";
 import { useDisclosure } from "@mantine/hooks";
 import useInit from "../../hooks/use_init";
+import useFriends from "../../api/use_friends";
 
 const iconSize = "30px";
 
@@ -21,7 +22,7 @@ const Home = () => {
   const { posts } = usePosts();
   const [visible, { toggle }] = useDisclosure(true);
   const { navigate } = useInit();
-
+  const { addFriend, friends, requests, cancel } = useFriends();
   if (posts.isLoading)
     return (
       <LoadingOverlay
@@ -33,6 +34,34 @@ const Home = () => {
     );
 
   if (posts.error) return <div>Error: {posts.error.message}</div>;
+
+  const handleAddFriend = (id) => {
+    addFriend(id, me.data.id);
+  };
+
+  const state = (id) => {
+    if (!friends.data) return "Follow";
+    if (friends.data.some((e) => e.toId === id || e.fromId === id)) {
+      return { text: "Unfollow", color: "green" };
+    } else if (requests.data.sent.some((e) => e.toId === id)) {
+      return { text: "Cancel", color: "red", click: () => cancel(id) };
+    } else {
+      return {
+        text: "Follow",
+        color: "blue",
+        click: () => handleAddFriend(id),
+      };
+    }
+  };
+
+  const FollowButton = (id) => {
+    const btnState = state(id);
+    return (
+      <Button onClick={btnState.click} color={btnState.color}>
+        {btnState.text}
+      </Button>
+    );
+  };
 
   return (
     <div className="overflow-y-auto">
@@ -58,7 +87,7 @@ const Home = () => {
                 </Text>
               </div>
               <div className="flex gap-3 items-center">
-                <Button>Follow</Button>
+                {FollowButton(post.author.id)}
                 <span className="cursor-pointer">
                   <HiDotsHorizontal
                     onClick={() => navigate(`/otherprofile/${post.author.id}`)}

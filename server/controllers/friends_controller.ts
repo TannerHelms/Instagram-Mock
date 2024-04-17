@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { FriendsRepository } from "../repositories/friends_repository";
+import { authMiddleware } from "../middleware/authentication";
 
 export const buildFriendsController = (repository: FriendsRepository) => {
     const router = Router();
@@ -45,6 +46,19 @@ export const buildFriendsController = (repository: FriendsRepository) => {
             res.json({ success: true });
         } catch (error) {
             res.status(500).json({ error: "Failed to accept friend request" });
+        }
+    });
+
+    // *********** Cancel a friend request ***********
+    router.delete("/request/:id", authMiddleware, async (req, res) => {
+        try {
+            const id = req.params.id;
+            console.log(id)
+            await repository.cancelFriendRequest(req.user!!.id, parseInt(id));
+            res.json({ success: true });
+        } catch (error) {
+            console.log(error)
+            res.status(500).json({ error: "Failed to cancel friend request" });
         }
     });
 

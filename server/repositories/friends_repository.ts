@@ -64,6 +64,15 @@ export class FriendsRepository {
         })
     }
 
+    cancelFriendRequest(fromId: number, toId: number) {
+        return this.db.friendRequest.deleteMany({
+            where: {
+                fromId,
+                toId,
+            }
+        })
+    }
+
     getSentFriendRequests(userId: number) {
         return this.db.friendRequest.findMany({
             where: {
