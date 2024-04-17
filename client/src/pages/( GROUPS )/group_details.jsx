@@ -34,7 +34,7 @@ const GroupDetails = ({ params }) => {
   return (
     <>
       <GroupDrawer group={group.data} opened={opened} close={close} />
-      <div className="pt-4 w-full">
+      <div className="w-full pt-10">
         {/* HEADER */}
         <div className="flex gap-3 items-center fixed bg-white w-full left-0 top-0 h-24 z-10 p-2">
           {/* BACK BUTTON */}

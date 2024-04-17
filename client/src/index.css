@@ -22,3 +22,7 @@
 .w-600 {
   width: 600px;
 }
+
+.max-600 {
+  max-width: 600px;
+}

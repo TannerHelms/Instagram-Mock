@@ -8,7 +8,7 @@ const Groups = () => {
   if (groups.error) return <div>Error: {groups.error.message}</div>;
 
   return (
-    <div className="flex flex-col gap-4 pt-5">
+    <div className="flex flex-col gap-4 pt-5 p-2">
       <p className="">Below are your chats</p>
       {groups.data.map((group, idx) => (
         <GroupCard key={idx} group={group} />

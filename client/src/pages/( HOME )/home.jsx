@@ -50,14 +50,19 @@ const Home = () => {
             <div className="flex justify-between">
               <div className="flex gap-3 items-center">
                 <Avatar src={post.author.backgroundImage} size={"40px"} />
-                <Text>
+                <Text
+                  className="hover:underline cursor-pointer"
+                  onClick={() => navigate(`/otherprofile/${post.author.id}`)}
+                >
                   {post.author.user.firstName} {post.author.user.lastName}
                 </Text>
               </div>
               <div className="flex gap-3 items-center">
                 <Button>Follow</Button>
                 <span className="cursor-pointer">
-                  <HiDotsHorizontal onClick={() => navigate(`/otherprofile/${post.author.id}`)}/>
+                  <HiDotsHorizontal
+                    onClick={() => navigate(`/otherprofile/${post.author.id}`)}
+                  />
                 </span>
               </div>
             </div>
