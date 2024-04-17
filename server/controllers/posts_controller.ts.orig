@@ -79,6 +79,10 @@ export const buildPostsController = (repository: PostsRepository) => {
 
     // ************ GET ALL POSTS ************
     router.get("/", authMiddleware, async (req, res) => {
+<<<<<<< HEAD
+        const posts = await repository.getPosts();
+        res.json({ posts });
+=======
         try {
             const posts = await repository.getPosts();
             res.json({ posts });
@@ -86,6 +90,7 @@ export const buildPostsController = (repository: PostsRepository) => {
             console.error("Error getting posts:", error);
             res.status(500).json({ error: "Failed to get posts." });
         }
+>>>>>>> create_post
     });
 
     // ************ GET ALL POSTS BY USER ************

@@ -44,6 +44,14 @@ app.use((req, res, next) => {
   next()
 });
 
+app.use((req, res, next) => {
+  if (req.url.includes("uploads")) {
+    res.sendFile(path.join(__dirname, "./server/public", req.url));
+  } else {  
+    next();
+  }
+});
+
 if (!DEBUG) {
   app.use(express.static('static'));
 } else {
@@ -63,6 +71,8 @@ app.use("/groups", buildGroupsController(groupsRepository));
 app.use("/messages", buildMessagesController(messagesRepository));
 app.use("/friends", buildFriendsController(friendsReposiotry));
 app.use("/posts", buildPostsController(postsReposiotry));
+app.use('/uploads', express.static(path.join(__dirname, 'public', 'uploads')));
+
 
 
 app.listen(process.env.PORT || 3000, () => {
