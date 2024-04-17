@@ -2,7 +2,7 @@ import MessageTile from "./ui/message_tile";
 
 const GroupDetailsContainer = ({ group }) => {
   return (
-    <div className="flex flex-col gap-4 pt-12 w-full">
+    <div className="w-full p-3" style={{ maxWidth: "600px" }}>
       {group.messages.map((message) => (
         <MessageTile key={message.id} message={message} group={group} />
       ))}

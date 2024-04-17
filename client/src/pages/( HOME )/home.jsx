@@ -34,10 +34,7 @@ const Home = () => {
 
   return (
     <div className="overflow-y-auto">
-      <div
-        className="flex flex-col gap-4 justify-center p-3"
-        style={{ maxWidth: "500px" }}
-      >
+      <div className="flex flex-col gap-4 justify-center p-3">
         {posts.data.map((post) => (
           <Card
             key={post.id}

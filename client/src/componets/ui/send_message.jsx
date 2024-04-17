@@ -30,13 +30,19 @@ const SendMessage = ({ group }) => {
   useHotkeys([["enter", handleSendMessage]], []);
 
   return (
-    <div className="flex gap-3 items-center w-fit m-auto center">
+    <div
+      className="flex gap-3 items-center w-full m-auto center p-3"
+      style={{ maxWidth: "600px" }}
+    >
       <ActionIcon size={"35px"} radius="xl" variant="transparent">
         <CiCirclePlus size={"35px"} />
       </ActionIcon>
 
       <TextInput
-        className="w-full"
+        classNames={{
+          root: "w-full",
+          input: "w-full",
+        }}
         radius="xl"
         size="md"
         value={msg}

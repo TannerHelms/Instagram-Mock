@@ -34,7 +34,7 @@ const GroupDetails = ({ params }) => {
   return (
     <>
       <GroupDrawer group={group.data} opened={opened} close={close} />
-      <div className="pt-4 w-600">
+      <div className="pt-4 w-full">
         {/* HEADER */}
         <div className="flex gap-3 items-center fixed bg-white w-full left-0 top-0 h-24 z-10 p-2">
           {/* BACK BUTTON */}
@@ -56,10 +56,8 @@ const GroupDetails = ({ params }) => {
           </div>
         </div>
         {/* MESSAGES */}
-        <div>
-          <GroupDetailsContainer group={group.data} />
-          <div ref={divRef} />
-        </div>
+        <GroupDetailsContainer group={group.data} />
+        <div ref={divRef} />
       </div>
       {/* SEND MESSAGE */}
       <div className="fixed bottom-0 left-0 w-full bg-white h-20 z-10">

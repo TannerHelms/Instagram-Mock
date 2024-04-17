@@ -5,7 +5,7 @@ import "@mantine/core/styles.css";
 const App = () => {
   return (
     <div className="bg">
-      <div className="w-fit m-auto pb-24">
+      <div className="pb-24 w-full m-auto" style={{ maxWidth: "600px" }}>
         <Navbar />
         <Outlet />
       </div>
