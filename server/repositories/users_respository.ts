@@ -99,4 +99,17 @@ export class UsersRepository {
     })
   }
 
+  async updateProfilePicture(id: number, profilePicturePath: string) {
+    return this.db.profile.update({
+      where: { id },
+      data: {
+        backgroundImage: profilePicturePath,
+        updatedAt: new Date(),
+      },
+      include: {
+        user: true
+      }
+    });
+  }
+
 }

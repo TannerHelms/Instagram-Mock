@@ -16,6 +16,10 @@ const useUsers = (id) => {
         return flattenObject(me)
     };
 
+    const refetchMe = () => {
+        queryClient.invalidateQueries(["me"]);
+      };
+
     const me = useQuery({
         queryKey: ["me"],
         queryFn: getMe,
@@ -42,6 +46,11 @@ const useUsers = (id) => {
         return flattenObject(updatedUser);
     };
 
+    const updatepic = async (userId, data) => {
+        const updatedUser = await api.put(`/users/${userId}/profile-picture`, data)
+        return flattenObject(updatedUser)
+    }
+
 
     // ALL USERS
     const users = useQuery({
@@ -58,7 +67,7 @@ const useUsers = (id) => {
     });
 
 
-    return { me, user, users, updateProfile: update}
+    return { me, user, users, updateProfile: update, updatePic: updatepic, refetchMe}
 }
 
 export default useUsers
