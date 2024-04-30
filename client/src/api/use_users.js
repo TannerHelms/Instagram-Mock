@@ -10,6 +10,12 @@ const useUsers = (id) => {
     const queryClient = useQueryClient();
     const token = useSelector(tk)
 
+    const getProfile = async (userId) => {
+        userId = parseInt(userId, 10)
+        const me = (await api.get(`/users/${userId}/profile`))
+        return flattenObject(me)
+    }
+
     // GET ME
     const getMe = async () => {
         const me = (await api.get("/users/me")).user
@@ -58,7 +64,7 @@ const useUsers = (id) => {
     });
 
 
-    return { me, user, users, updateProfile: update}
+    return { me, user, users, getProfile, updateProfile: update}
 }
 
 export default useUsers

@@ -9,20 +9,22 @@ import {
 } from "@mantine/core";
 import { HiDotsHorizontal } from "react-icons/hi";
 import { FaRegHeart, FaThumbsUp } from "react-icons/fa";
-import { FaRegComment } from "react-icons/fa";
+import { FaHeart } from "react-icons/fa";
 import useUsers from "../../api/use_users";
 import { useDisclosure } from "@mantine/hooks";
 import useInit from "../../hooks/use_init";
 import useFriends from "../../api/use_friends";
+import { useState } from "react";
 
 const iconSize = "30px";
 
 const Home = () => {
-  const { me } = useUsers();
+  const { me, getProfile } = useUsers();
   const { posts } = usePosts();
   const [visible, { toggle }] = useDisclosure(true);
   const { navigate } = useInit();
   const { addFriend, friends, requests, cancel } = useFriends();
+  const [likedPosts, setLikedPosts] = useState([]);
   if (posts.isLoading || requests.isLoading)
     return (
       <LoadingOverlay
@@ -38,6 +40,17 @@ const Home = () => {
   const handleAddFriend = (id) => {
     addFriend(id, me.data.id);
   };
+
+  const handleLike = (id) => {
+    if (likedPosts.includes(id)) {
+      setLikedPosts(likedPosts.filter((postId) => postId !== id));
+    } else {
+      setLikedPosts([...likedPosts, id]);
+    }
+
+    profile = getProfile(me.data.id);
+    console.log(profile);
+  }
 
   const state = (id) => {
     if (!friends.data) return "Follow";
@@ -99,18 +112,21 @@ const Home = () => {
             <Image src={post.image} alt={post.title} />
 
             {/* LIKE BUTTON & LIKES */}
-            <div className="flex gap-5">
-              <FaRegHeart size={iconSize} className="cursor-pointer" />
-              <FaRegComment size={iconSize} className="cursor-pointer" />
-            </div>
+            {likedPosts.includes(post.id) ? (
+                <FaHeart
+                  size={iconSize}
+                  className="cursor-pointer"
+                  onClick={() => handleLike(post.id)}
+                />
+              ) : (
+                <FaRegHeart
+                  size={iconSize}
+                  className="cursor-pointer"
+                  onClick={() => handleLike(post.id)}
+                />
+            )}
             {/* POST DESCRIPTION */}
             <Text>{post.body}</Text>
-
-            {/* DATE POSTED */}
-            <div className="flex flex-row gap-4 items-center">
-              <Avatar src={me.data.backgroundImage} size={"40px"} />
-              <p className="label">Add a comment...</p>
-            </div>
 
             {/* Date OF POST */}
             <p>{post.createdAt}</p>
