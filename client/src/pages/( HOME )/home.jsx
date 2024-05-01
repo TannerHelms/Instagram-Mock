@@ -25,6 +25,19 @@ const Home = () => {
   const { navigate } = useInit();
   const { addFriend, friends, requests, cancel } = useFriends();
   const [likedPosts, setLikedPosts] = useState([]);
+
+  useEffect(() => {
+    const fetchLikedPosts = async () => {
+      const profileData = await getProfile(me.data.id)
+      let likedPostsIds = profileData.likedPosts.map(item => item.id);
+      if (profileData.likedPosts) {
+        setLikedPosts(likedPostsIds);
+      }
+    };
+
+    fetchLikedPosts();
+  }, []);
+
   if (posts.isLoading || requests.isLoading)
     return (
       <LoadingOverlay
@@ -43,14 +56,21 @@ const Home = () => {
 
   const handleLike = async (id) => {
     const temp = await getProfile(me.data.id);
-    console.log(temp);
+    console.log(temp)
 
+    let updatedLikedPosts = [];
     if (likedPosts.includes(id)) {
       setLikedPosts(likedPosts.filter((postId) => postId !== id));
+      updatedLikedPosts = likedPosts.filter((postId) => postId !== id);
+      const data = me.data;
+      data.likedPosts = updatedLikedPosts;
+      console.log(data);
+      const update = await updateProfile(me.data.id, data);
     } else {
       setLikedPosts([...likedPosts, id]);
+      updatedLikedPosts = [...likedPosts, id];
       const data = me.data;
-      data.likedPosts = [...likedPosts];
+      data.likedPosts = [...updatedLikedPosts];
       const update = await updateProfile(me.data.id, data);
     }
   }
