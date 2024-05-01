@@ -14,12 +14,12 @@ import useUsers from "../../api/use_users";
 import { useDisclosure } from "@mantine/hooks";
 import useInit from "../../hooks/use_init";
 import useFriends from "../../api/use_friends";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const iconSize = "30px";
 
 const Home = () => {
-  const { me, getProfile } = useUsers();
+  const { me, getProfile, updateProfile } = useUsers();
   const { posts } = usePosts();
   const [visible, { toggle }] = useDisclosure(true);
   const { navigate } = useInit();
@@ -41,15 +41,18 @@ const Home = () => {
     addFriend(id, me.data.id);
   };
 
-  const handleLike = (id) => {
+  const handleLike = async (id) => {
+    const temp = await getProfile(me.data.id);
+    console.log(temp);
+
     if (likedPosts.includes(id)) {
       setLikedPosts(likedPosts.filter((postId) => postId !== id));
     } else {
       setLikedPosts([...likedPosts, id]);
+      const data = me.data;
+      data.likedPosts = [...likedPosts];
+      const update = await updateProfile(me.data.id, data);
     }
-
-    profile = getProfile(me.data.id);
-    console.log(profile);
   }
 
   const state = (id) => {
