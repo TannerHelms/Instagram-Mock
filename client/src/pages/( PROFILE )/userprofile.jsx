@@ -6,7 +6,7 @@ import usePosts from "../../api/use_posts";
 import ProfileEditModal from "../../componets/ui/profileEditModal";
 import AcceptFriendsModal from "../../componets/ui/acceptFriendsModal";
 import RemoveFriendsModal from "../../componets/ui/removeFriends.Modal";
-import { Avatar } from "@mantine/core";
+import { Avatar, LoadingOverlay } from "@mantine/core";
 
 const UserProfile = () => {
   const { me, updateProfile, updatePic, refetchMe } = useUsers();
@@ -61,7 +61,12 @@ const UserProfile = () => {
 
   if (!friends || !requests) {
     return (
-      <div className="center flex flex-col gap-2 items-center">Loading...</div>
+      <LoadingOverlay
+        visible={true}
+        zIndex={1000}
+        overlayProps={{ radius: "sm", blur: 2 }}
+        loaderProps={{ color: "pink", type: "bars" }}
+      />
     );
   }
 
@@ -197,7 +202,7 @@ const UserProfile = () => {
                   <img
                     src={post.image}
                     alt="Post"
-                    className="w-full h-auto aspect-square object-cover cursor-pointer hover:scale-125 transition-all duration-500"
+                    className="w-full h-auto aspect-square object-cover cursor-pointer hover:scale-125 transition-all duration-500 animate-fade-in"
                   />
                 </div>
               ))

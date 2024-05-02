@@ -7,7 +7,7 @@ const Search = () => {
   if (users.isLoading)
     return (
       <LoadingOverlay
-        visible={posts.isLoading}
+        visible={users.isLoading}
         zIndex={1000}
         overlayProps={{ radius: "sm", blur: 2 }}
         loaderProps={{ color: "pink", type: "bars" }}

@@ -13,6 +13,7 @@ export type UpdateProfilePayload = {
   lastName: string,
   age?: number;
   backgroundImage?: string;
+  likedPosts?: number[];
 };
 
 export class UsersRepository {
@@ -55,10 +56,15 @@ export class UsersRepository {
     });
   }
 
-  async getUsers() {
+  async getUsers(userId: number) {
     return this.db.user.findMany({
       include: {
         profile: true
+      },
+      where: {
+        NOT: {
+          id: userId
+        }
       }
     });
   }
@@ -69,21 +75,27 @@ export class UsersRepository {
     return await this.db.profile.findUnique({
       where: { id },
       include: {
-        user: true
+        user: true,
+        likedPosts: true
       }
     });
   }
 
   async updateUser(id: number, data: Partial<UpdateProfilePayload>) {
+    const likedPosts = data.likedPosts || [];
     await this.db.profile.update({
       where: { id },
       data: {
         age: data.age,
         backgroundImage: data.backgroundImage,
-        updatedAt: new Date()
+        updatedAt: new Date(),
+        likedPosts: {
+          connect: likedPosts.map((postId) => ({ id: postId }))
+        }
       },
       include: {
-        user: true
+        user: true,
+        likedPosts: true
       }
     });
     return await this.db.user.update({
