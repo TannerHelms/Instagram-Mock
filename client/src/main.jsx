@@ -14,6 +14,7 @@ import Home from "./pages/( HOME )/home.jsx";
 import userProfile from "./pages/( PROFILE )/userprofile.jsx";
 import otherProfile from "./pages/( PROFILE )/otherprofile.jsx";
 import Login from "./pages/( SIGN_IN )/login.jsx";
+import SignUp from "./pages/( SIGN_IN )/sign_up.jsx";
 import { persistor, store } from "./redux/store.js";
 import appTheme from "./theme/mantine.js";
 import Search from "./pages/( SEARCH )/search.jsx";
@@ -43,7 +44,7 @@ const router = createHashRouter([
       },
       {
         path: "/sign_up",
-        element: <RedirectRoute component={Login} />,
+        element: <RedirectRoute component={SignUp} />,
       },
       {
         path: "/search",
