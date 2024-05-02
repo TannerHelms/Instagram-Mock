@@ -1,13 +1,19 @@
 import { Router } from "express";
 import { FriendsRepository } from "../repositories/friends_repository";
+import { authMiddleware } from "../middleware/authentication";
 
 export const buildFriendsController = (repository: FriendsRepository) => {
     const router = Router();
 
     // ************ GET ALL FRIENDS ************
-    router.get("/", async (req, res) => {
-        const friends = await repository.getFriends(req.user!!.id);
-        res.json({ friends });
+    router.get("/user/:id", async (req, res) => {
+        try {
+            const userId = req.params.id;
+            const friends = await repository.getFriends(parseInt(userId));
+            res.json({ friends });
+        } catch (error) {
+            res.status(500).json({ error: "Failed to Get Friends" });
+        }
     });
 
     // ************ REMOVE A FRIEND ************
@@ -43,11 +49,25 @@ export const buildFriendsController = (repository: FriendsRepository) => {
         }
     });
 
-    // ************ GET ALL FRIEND REQUESTS ************
-    router.get("/requests", async (req, res) => {
+    // *********** Cancel a friend request ***********
+    router.delete("/request/:id", authMiddleware, async (req, res) => {
         try {
-            const sent = await repository.getSentFriendRequests(req.user!!.id);
-            const received = await repository.getReceivedFriendRequests(req.user!!.id);
+            const id = req.params.id;
+            console.log(id)
+            await repository.cancelFriendRequest(req.user!!.id, parseInt(id));
+            res.json({ success: true });
+        } catch (error) {
+            console.log(error)
+            res.status(500).json({ error: "Failed to cancel friend request" });
+        }
+    });
+
+    // ************ GET ALL FRIEND REQUESTS ************
+    router.get("/user/:id/requests", async (req, res) => {
+        try {
+            const userId = req.params.id;
+            const sent = await repository.getSentFriendRequests(parseInt(userId));
+            const received = await repository.getReceivedFriendRequests(parseInt(userId));
             res.json({ sent, received });
         } catch (error) {
             res.status(500).json({ error: "Failed to get friend requests" });

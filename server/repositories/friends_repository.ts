@@ -26,7 +26,11 @@ export class FriendsRepository {
                 ]
             },
             include: {
-                from: true,
+                from: {
+                    include: {
+                        user: true
+                    }
+                },
                 to: true
             }
         })
@@ -60,6 +64,15 @@ export class FriendsRepository {
         })
     }
 
+    cancelFriendRequest(fromId: number, toId: number) {
+        return this.db.friendRequest.deleteMany({
+            where: {
+                fromId,
+                toId,
+            }
+        })
+    }
+
     getSentFriendRequests(userId: number) {
         return this.db.friendRequest.findMany({
             where: {
@@ -79,7 +92,11 @@ export class FriendsRepository {
                 accepted: false
             },
             include: {
-                from: true
+                from: {
+                    include: {
+                        user: true
+                    }
+                }
             }
         })
     }

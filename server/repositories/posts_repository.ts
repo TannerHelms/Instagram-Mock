@@ -36,7 +36,8 @@ export class PostsRepository {
                         user: true
                     }
                 }
-            }
+            },
+            take: 10
         })
     }
 

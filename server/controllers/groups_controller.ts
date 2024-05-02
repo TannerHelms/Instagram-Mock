@@ -39,10 +39,10 @@ export const buildGroupsController = (repository: GroupsRepository) => {
     // ************ GET A CONVERSATION BY ID ************
     router.get("/:id", authMiddleware, async (req, res) => {
         try {
-            const conversation = await repository.getGroup(parseInt(req.params.id));
-            res.json({ conversation });
+            const group = await repository.getGroup(parseInt(req.params.id));
+            res.json({ group });
         } catch (error) {
-            res.status(500).json({ error: "Conversation not found" });
+            res.status(500).json({ error: "group not found" });
         }
     });
 

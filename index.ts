@@ -5,8 +5,6 @@ import fs from "fs";
 import dotenv from "dotenv";
 import bodyParser from "body-parser";
 import { PrismaClient } from "@prisma/client";
-import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
 import { buildUsersController } from "./server/controllers/users_controller";
 import { buildSessionsController } from "./server/controllers/sessions_controller";
 import { buildHomeController } from "./server/controllers/home_controller";
@@ -44,6 +42,14 @@ app.use((req, res, next) => {
   next()
 });
 
+app.use((req, res, next) => {
+  if (req.url.includes("uploads") || req.url.includes("manifest.json") || req.url.includes("sw.js")) {
+    res.sendFile(path.join(__dirname, "./server/public", req.url));
+  } else {
+    next();
+  }
+});
+
 if (!DEBUG) {
   app.use(express.static('static'));
 } else {
@@ -63,6 +69,8 @@ app.use("/groups", buildGroupsController(groupsRepository));
 app.use("/messages", buildMessagesController(messagesRepository));
 app.use("/friends", buildFriendsController(friendsReposiotry));
 app.use("/posts", buildPostsController(postsReposiotry));
+app.use('/uploads', express.static(path.join(__dirname, 'public', 'uploads')));
+
 
 
 app.listen(process.env.PORT || 3000, () => {

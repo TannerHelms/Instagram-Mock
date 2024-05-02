@@ -1,48 +1,102 @@
 /*
-
     Create a post
         - req.body
         - req.user
-        - req.image
+        - req.files.image (handled by express-fileupload)
 
     Get all posts and sort by updatedAt
 
     Get all posts by a user
-
-
 */
 
 import { Router } from "express";
-import { FriendsRepository } from "../repositories/friends_repository";
+import fileUpload, { UploadedFile } from 'express-fileupload';
 import { PostsRepository } from "../repositories/posts_repository";
 import { authMiddleware } from "../middleware/authentication";
+import * as path from 'path';
+import * as fs from 'fs';
+
+
+
+const uploadPath = path.join(__dirname, '..', 'public', 'uploads'); // Adjust the path as needed
+
+// Ensure the upload directory exists
+try {
+    if (!fs.existsSync(uploadPath)) {
+      fs.mkdirSync(uploadPath, { recursive: true });
+    }
+  } catch (error) {
+    console.error("Error creating uploads directory:", error);
+  }
+  
 
 export const buildPostsController = (repository: PostsRepository) => {
     const router = Router();
 
+    // Apply express-fileupload middleware at the router level
+    // Note: Adjust settings as necessary for your use case
+    router.use(fileUpload({
+        limits: { fileSize: 50 * 1024 * 1024 }, // For example, limit file size to 50MB
+        useTempFiles: true, // This will store files in temporary directory
+        tempFileDir: '/tmp/' // Specify the temp file directory
+    }));
+
     // ************ CREATE A POST ************
     router.post("/", authMiddleware, async (req, res) => {
-        const post = await repository.create({
-            body: req.body.body,
-            image: req.body.image,
-            userId: req.user!!.id
-        });
+        if (!req.files || Object.keys(req.files).length === 0) {
+            return res.status(400).json({ error: 'No files were uploaded.' });
+        }
 
-        res.json({ post });
+        const imageFile = req.files.image as UploadedFile;
+        const userId = req.user!!.id;
+        const filename = `${userId}_${Date.now()}_${imageFile.name}`;
+        const savePath = path.join(uploadPath, filename);
+
+        // Use the mv() method to place the file on the server
+        imageFile.mv(savePath, async (err) => {
+            if (err) {
+                return res.status(500).json({ error: 'Failed to upload the image.' });
+            }
+
+            try {
+                // Construct the URL to the saved image
+                const imageUrl = `${req.protocol}://${req.get('host')}/uploads/${filename}`;
+                
+                const bodyText = req.body.body;
+                const post = await repository.create({
+                    body: bodyText,
+                    image: imageUrl,
+                    userId
+                });
+
+                res.json({ post });
+            } catch (error) {
+                console.error("Failed to create post:", error);
+                res.status(500).json({ error: "Failed to create post." });
+            }
+        });
     });
 
     // ************ GET ALL POSTS ************
     router.get("/", authMiddleware, async (req, res) => {
-        console.log('here')
-        const posts = await repository.getPosts();
-        res.json({ posts });
+        try {
+            const posts = await repository.getPosts();
+            res.json({ posts });
+        } catch (error) {
+            console.error("Error getting posts:", error);
+            res.status(500).json({ error: "Failed to get posts." });
+        }
     });
 
     // ************ GET ALL POSTS BY USER ************
     router.get("/user/:id", authMiddleware, async (req, res) => {
-        const posts = await repository.getPostsByUser(parseInt(req.params.id));
-        res.json({ posts });
+        try {
+            const posts = await repository.getPostsByUser(parseInt(req.params.id));
+            res.json({ posts });
+        } catch (error) {
+            console.error("Error getting user posts:", error);
+            res.status(500).json({ error: "Failed to get user posts." });
+        }
     });
-
     return router;
 }

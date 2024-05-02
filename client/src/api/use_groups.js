@@ -2,7 +2,7 @@ import useApi from "../hooks/use_api";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import timeAgo from "../utils/time_ago";
 
-const useGroups = () => {
+const useGroups = (id) => {
     const api = useApi();
     const queryClient = useQueryClient();
 
@@ -16,12 +16,28 @@ const useGroups = () => {
         return groups;
     };
 
+    const get = async () => {
+        const group = (await api.get(`/groups/${id}`)).group;
+        group.lastMessageAt = timeAgo(new Date(group.lastMessageAt));
+        group.messages.map((message) => {
+            message.createdAt = timeAgo(new Date(message.createdAt));
+            return message;
+        });
+        return group;
+    }
+
     const groups = useQuery({
         queryKey: ["groups"],
         queryFn: all,
     });
 
-    return { groups }
+    const group = useQuery({
+        queryKey: ["group", id],
+        queryFn: get,
+        enabled: !!id,
+    });
+
+    return { group, groups }
 }
 
 export default useGroups;

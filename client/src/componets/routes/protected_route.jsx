@@ -5,7 +5,7 @@ import useNavbar from "../../hooks/use_navbar";
 
 // Protected Route that will redirect to the given route
 
-const ProtectedRoute = ({ component: Componet, path = "/login" }) => {
+const ProtectedRoute = ({ component: Componet, path = "/login", params }) => {
   useNavbar();
   const { me } = useUsers();
   const { navigate } = useInit();

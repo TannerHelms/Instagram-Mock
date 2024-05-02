@@ -10,11 +10,21 @@ const useUsers = (id) => {
     const queryClient = useQueryClient();
     const token = useSelector(tk)
 
+    const getProfile = async (userId) => {
+        userId = parseInt(userId, 10)
+        const me = (await api.get(`/users/${userId}/profile`))
+        return flattenObject(me)
+    }
+
     // GET ME
     const getMe = async () => {
         const me = (await api.get("/users/me")).user
         return flattenObject(me)
     };
+
+    const refetchMe = () => {
+        queryClient.invalidateQueries(["me"]);
+      };
 
     const me = useQuery({
         queryKey: ["me"],
@@ -37,6 +47,16 @@ const useUsers = (id) => {
         return flattenObject(user)
     };
 
+    const update = async (userId, data) => {
+        const updatedUser = await api.put(`/users/${userId}/profile`, data);
+        return flattenObject(updatedUser);
+    };
+
+    const updatepic = async (userId, data) => {
+        const updatedUser = await api.put(`/users/${userId}/profile-picture`, data)
+        return flattenObject(updatedUser)
+    }
+
 
     // ALL USERS
     const users = useQuery({
@@ -52,8 +72,7 @@ const useUsers = (id) => {
         enabled: !!id,
     });
 
-
-    return { me, user, users }
+    return { me, user, users, getProfile, updateProfile: update, updatePic: updatepic, refetchMe}
 }
 
 export default useUsers

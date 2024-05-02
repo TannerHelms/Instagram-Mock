@@ -19,3 +19,10 @@
 .label {
   color: rgba(60, 60, 60, 0.6);
 }
+.w-600 {
+  width: 600px;
+}
+
+.max-600 {
+  max-width: 600px;
+}

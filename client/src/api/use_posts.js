@@ -8,10 +8,31 @@ const usePosts = () => {
 
     const all = async () => {
         const posts = (await api.get("/posts")).posts;
-        posts.map((post) => {
+        await Promise.all(posts.map(async (post) => {
             post.createdAt = timeAgo(new Date(post.createdAt));
-            return post;
-        });
+            const img = new Image();
+            await new Promise((resolve, reject) => {
+                img.onload = () => {
+                    resolve(post);
+                }
+                img.src = post.image;
+            })
+        }));
+        return posts;
+    };
+
+    const usersPosts = async (id) => {
+        const posts = (await api.get(`/posts/user/${id}`)).posts;
+        await Promise.all(posts.map(async (post) => {
+            post.createdAt = timeAgo(new Date(post.createdAt));
+            await new Promise((resolve, reject) => {
+                const img = new Image();
+                img.onload = () => {
+                    resolve(post);
+                }
+                img.src = post.image;
+            });
+        }));
         return posts;
     };
 
@@ -20,7 +41,7 @@ const usePosts = () => {
         queryFn: all,
     });
 
-    return { posts }
+    return { posts, usersPosts }
 }
 
 export default usePosts;

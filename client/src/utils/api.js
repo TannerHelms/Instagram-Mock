@@ -4,24 +4,29 @@ import { store } from "../redux/store";
 export class Api {
   async makeRequest(url, method, body) {
     const token = store.getState().token.value;
-    const options = {};
-    if (method === 'POST' || method === 'PUT') {
-      options.body = JSON.stringify(body);
+    const headers = {
+      Authorization: `Bearer ${token}`,
+    };
+
+    // Check if the body is an instance of FormData. If not, set the Content-Type to application/json
+    if (!(body instanceof FormData)) {
+      headers['Content-Type'] = 'application/json';
+      body = JSON.stringify(body);
     }
 
-    const res = await fetch(url, {
+    const options = {
       method,
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json',
-      },
-      ...options,
-    });
+      headers,
+      body: method !== 'GET' ? body : null,
+    };
+
+    if (method === 'GET') delete options.body; // Remove body for GET requests
+
+    const res = await fetch(url, options);
 
     const resp = await res.json();
     if (resp.error) throw new Error(resp.error);
     return resp;
-
   }
 
   get(url) {

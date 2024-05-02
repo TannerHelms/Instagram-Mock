@@ -1,5 +1,6 @@
 import { Button, TextInput, Title } from "@mantine/core";
 import { useForm, zodResolver } from "@mantine/form";
+import { Link } from 'react-router-dom';
 import { z } from "zod";
 import useLogin from "../../hooks/use_login";
 
@@ -47,6 +48,9 @@ const Login = () => {
           Sign In
         </Button>
       </form>
+      <div className="text-center">
+        <Link to="/sign_up">Sign Up</Link>
+      </div>
     </div>
   );
 };

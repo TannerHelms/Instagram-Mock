@@ -53,7 +53,11 @@ export class GroupsRepository {
                         createdAt: 'desc'
                     },
                     include: {
-                        sender: true
+                        sender: {
+                            include: {
+                                user: true
+                            }
+                        }
                     }
                 }
             }
@@ -66,13 +70,22 @@ export class GroupsRepository {
                 id
             },
             include: {
-                profiles: true,
+                profiles: {
+                    include: {
+                        user: true
+                    }
+
+                },
                 messages: {
                     orderBy: {
-                        createdAt: 'desc'
+                        createdAt: 'asc'
                     },
                     include: {
-                        sender: true
+                        sender: {
+                            include: {
+                                user: true
+                            }
+                        }
                     }
                 }
             }
