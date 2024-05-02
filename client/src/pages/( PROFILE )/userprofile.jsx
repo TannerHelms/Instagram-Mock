@@ -9,7 +9,7 @@ import RemoveFriendsModal from "../../componets/ui/removeFriends.Modal";
 import { Avatar, LoadingOverlay } from "@mantine/core";
 
 const UserProfile = () => {
-  const { me, updateProfile } = useUsers();
+  const { me, updateProfile, updatePic, refetchMe } = useUsers();
   const { usersPosts } = usePosts();
   const { getFriends, getFriendRequests, acceptFriendRequest, removeFriend } =
     useFriends();
@@ -28,6 +28,7 @@ const UserProfile = () => {
   const fetchData = async () => {
     if (me.data.id) {
       try {
+        console.log("fetching data...")
         const userPosts = await usersPosts(me.data.id);
         setPosts(userPosts);
 
@@ -103,6 +104,21 @@ const UserProfile = () => {
     fetchData();
   };
 
+  const handleImageChange = async (e) => {
+    if (e.target.files && e.target.files[0]) {
+      const formData = new FormData();
+      formData.append("profilePicture", e.target.files[0]);
+      try {
+        // Update profile picture
+        await updatePic(me.data.id, formData);
+        // Refetch user data
+        refetchMe()
+      } catch (error) {
+        console.error("Error updating profile picture:", error);
+      }
+    }
+  };
+
   return (
     <div className="flex flex-col min-h-screen">
       <div className="fixed top-0 left-0 w-full z-50 bg-white shadow-md">
@@ -155,6 +171,16 @@ const UserProfile = () => {
                   >
                     Remove Friends
                   </button>
+
+                  <label className="block px-4 py-2 w-full text-left hover:bg-gray-100 cursor-pointer">
+                    Edit Profile Picture
+                    <input
+                      type="file"
+                      onChange={handleImageChange}
+                      accept="image/png, image/jpeg"
+                      style={{ display: "none" }}
+                    />
+                  </label>
                 </div>
               )}
             </div>

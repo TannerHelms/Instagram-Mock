@@ -60,17 +60,6 @@ const ProfileEditModal = ({ onClose, onUpdate, initialProfileData }) => {
               className="border rounded-md px-2 py-1 w-full"
             />
           </div>
-          {/* <div className="mb-4">
-            <label htmlFor="backgroundImage" className="block font-bold mb-1">Background Image:</label>
-            <input
-              type="text"
-              id="backgroundImage"
-              name="backgroundImage"
-              value={formData.backgroundImage}
-              onChange={handleChange}
-              className="border rounded-md px-2 py-1 w-full"
-            />
-          </div> */}
           <div className="flex justify-between">
             <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">Save</button>
             <button type="button" onClick={onClose} className="bg-gray-400 text-white px-4 py-2 rounded-md hover:bg-gray-500">Cancel</button>
